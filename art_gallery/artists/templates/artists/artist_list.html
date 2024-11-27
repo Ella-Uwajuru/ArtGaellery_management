@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Artists{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Our Artists</h2>
+    <div class="row">
+        {% for artist in artists %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        {% if artist.user.profile_picture %}
+                            <img src="{{ artist.user.profile_picture.url }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <h5 class="card-title">{{ artist.user.get_full_name }}</h5>
+                        <p class="card-text text-muted">{{ artist.bio|truncatewords:30 }}</p>
+                        <div class="mt-3">
+                            <a href="{% url 'artist-detail' artist.pk %}" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>Artworks: {{ artist.artwork_set.count }}</small>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p>No artists found.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

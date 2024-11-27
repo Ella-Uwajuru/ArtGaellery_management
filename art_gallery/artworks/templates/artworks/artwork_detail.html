@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ artwork.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <img src="{{ artwork.image.url }}" class="card-img-top artwork-detail-image" alt="{{ artwork.title }}">
+                <div class="card-body">
+                    <h2 class="card-title">{{ artwork.title }}</h2>
+                    <p class="card-text">{{ artwork.description }}</p>
+                    <div class="artwork-details mt-4">
+                        <h4>Details</h4>
+                        <ul class="list-unstyled">
+                            <li><strong>Artist:</strong> 
+                                <a href="{% url 'artist-detail' artwork.artist.id %}">
+                                    {{ artwork.artist.user.get_full_name }}
+                                </a>
+                            </li>
+                            <li><strong>Price:</strong> ${{ artwork.price }}</li>
+                            <li><strong>Created:</strong> {{ artwork.created_at|date:"F d, Y" }}</li>
+                            {% if artwork.medium %}
+                                <li><strong>Medium:</strong> {{ artwork.medium }}</li>
+                            {% endif %}
+                            {% if artwork.dimensions %}
+                                <li><strong>Dimensions:</strong> {{ artwork.dimensions }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                {% if user == artwork.artist.user %}
+                    <div class="card-footer">
+                        <div class="btn-group">
+                            <a href="{% url 'artwork-update' artwork.pk %}" class="btn btn-primary">Edit Artwork</a>
+                            <a href="{% url 'artwork-delete' artwork.pk %}" class="btn btn-danger">Delete Artwork</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>About the Artist</h4>
+                    <div class="text-center mb-3">
+                        {% if artwork.artist.user.profile_picture %}
+                            <img src="{{ artwork.artist.user.profile_picture.url }}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <h5 class="text-center">{{ artwork.artist.user.get_full_name }}</h5>
+                    <p>{{ artwork.artist.bio|truncatewords:50 }}</p>
+                    <a href="{% url 'artist-detail' artwork.artist.id %}" class="btn btn-outline-primary w-100">View Artist Profile</a>
+                </div>
+            </div>
+
+            {% if related_artworks %}
+                <div class="card">
+                    <div class="card-body">
+                        <h4>More by this Artist</h4>
+                        {% for related_artwork in related_artworks %}
+                            <div class="card mb-2">
+                                <div class="row g-0">
+                                    <div class="col-4">
+                                        <img src="{{ related_artwork.image.url }}" class="img-fluid rounded-start" alt="{{ related_artwork.title }}">
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ related_artwork.title }}</h6>
+                                            <p class="card-text"><small class="text-muted">${{ related_artwork.price }}</small></p>
+                                            <a href="{% url 'artwork-detail' related_artwork.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
