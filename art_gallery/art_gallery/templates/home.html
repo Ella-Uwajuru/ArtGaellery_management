@@ -66,36 +66,38 @@
         {% endfor %}
     </div>
 </section>
+{% endif %}
 
-<div class="container mt-4">
-    <canvas id="artistStats"></canvas>
+<!-- Simple Statistics Graph -->
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Gallery Statistics</h2>
+            <canvas id="galleryStats"></canvas>
+        </div>
+    </div>
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div class="container mt-4">
-    <canvas id="artistStats"></canvas>
-</div>
-
 <script>
-    const ctx = document.getElementById('artistStats');
+    const ctx = document.getElementById('galleryStats');
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: {{ artist_names|safe }},
+            labels: {{ data_labels|safe }},
             datasets: [{
-                label: 'Artworks',
-                data: {{ artwork_counts|safe }},
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Exhibitions',
-                data: {{ exhibition_counts|safe }},
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                label: 'Count',
+                data: {{ data_counts|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.5)',  // Pink for Artists
+                    'rgba(54, 162, 235, 0.5)',  // Blue for Artworks
+                    'rgba(255, 206, 86, 0.5)'   // Yellow for Exhibitions
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
                 borderWidth: 1
             }]
         },
@@ -106,21 +108,23 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Count'
+                        text: 'Total Count'
                     }
                 }
             },
             plugins: {
                 title: {
                     display: true,
-                    text: 'Artist Statistics'
+                    text: 'Overview of Gallery Items',
+                    font: {
+                        size: 16
+                    }
                 },
                 legend: {
-                    position: 'top'
+                    display: false
                 }
             }
         }
     });
 </script>
-{% endif %}
 {% endblock %}
